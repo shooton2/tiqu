@@ -24,8 +24,8 @@ if num_token > 16000:
     text = compress_novel_content(text)
 
 # 设置OpenAI API环境变量
-os.environ["OPENAI_API_BASE"] = "https://api.chatanywhere.tech/v1"
-os.environ["OPENAI_API_KEY"] = "sk-uibaSqnGRtJXAIybs1q5zUp2TrnBdiLo7gUdE1tbuKQYFrce"
+os.environ["OPENAI_API_BASE"] = ""
+os.environ["OPENAI_API_KEY"] = ""
 
 
 # 定义新类用于保存句子和ID
