@@ -10,6 +10,7 @@ import tiktoken
 import re
 import unicodedata
 
+CHUNK_SIZE = 512
 def cn_or_en(text):
     subtext = re.sub(r'[,.!0-9]', '', text)
     for char in subtext:
@@ -22,6 +23,28 @@ def cn_or_en(text):
 file_path = './686_en.txt'
 with open(file_path, 'r', encoding='utf-8') as file:
     text = file.read()
+
+def compress_novel_content(content,chunk_size=CHUNK_SIZE):
+    chunks = [content[i:i + chunk_size] for i in range(0, len(content), chunk_size)]
+    compressed_chunks = []
+    num = num_tokens(content)
+    for chunk in chunks:
+        try:
+            llm_lingua = PromptCompressor(
+            model_name="./llmlingua-2-xlm-roberta-large-meetingbank",
+            use_llmlingua2=True,
+            )
+            summary_response = llm_lingua.compress_prompt(chunk, rate=12000/num , force_tokens=['\n', '?'])
+            # print(summary_response)
+            compressed_chunks.append(summary_response.get('compressed_prompt'))
+        except Exception as e:
+            print(f"生成压缩时出错: {e}")
+            return
+
+    compressed_content = "".join(compressed_chunks)
+    compressed_content = re.sub(r'\n+', ' ', compressed_content)
+    compressed_content = re.sub(r'\s+', ' ', compressed_content)
+    return compressed_content.strip()
 
 en_or_cn = cn_or_en(text)
 
